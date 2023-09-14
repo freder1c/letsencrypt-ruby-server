@@ -12,6 +12,8 @@ require "config/application"
 require "config/api"
 
 require "setup/controller"
+require "setup/database_cleaner"
+require "setup/factory"
 require "setup/simplecov"
 
 Application::Logger.level = :error

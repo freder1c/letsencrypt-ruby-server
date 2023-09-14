@@ -18,8 +18,8 @@ def establish!
   retries ||= 5
 
   Sequel.connect(db_config).tap(&:test_connection)
-rescue Sequel::DatabaseConnectionError => e
-  raise e if (retries -= 1).negative?
+rescue Sequel::DatabaseConnectionError => exception
+  raise exception if (retries -= 1).negative?
 
   Application::Logger.warn("Retry to establish database connection.")
   sleep 5

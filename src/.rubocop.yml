@@ -29,3 +29,17 @@ Lint/RedundantDirGlobSort:
   Exclude:
     - "config/api.rb"
     - "config/application.rb"
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: "exception"
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: "consistent"
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - "app/helper/password.rb"
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/integration/**/*"
