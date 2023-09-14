@@ -3,11 +3,8 @@
 name: Build and test
 
 on:
-  pull_request:
-    types:
-      - opened
-  push:
-    branches: [ "main" ]
+  branches:
+    - "pull_request/**"
 
 jobs:
   build-and-test:
