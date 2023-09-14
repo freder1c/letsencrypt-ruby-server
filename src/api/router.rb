@@ -24,6 +24,11 @@ module Application
       request.on("status") do
         request.is(method: :get) { render(Controller::Status.call) }
       end
+
+      request.on("session") do
+        request.is(method: :post) { render(Controller::Session.new(parse(request)).create) }
+        request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
+      end
     end
   end
 end
