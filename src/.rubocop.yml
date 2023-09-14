@@ -1,0 +1,24 @@
+# frozen_string_literal: true
+
+AllCops:
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+  ConsistentQuotesInMultiline: false
+
+Style/StringLiteralsInInterpolation:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Naming/ConstantName:
+  Exclude:
+    - "config/initializer/logger.rb"
+
+Style/StringConcatenation:
+  Exclude:
+    - "config/initializer/logger.rb"

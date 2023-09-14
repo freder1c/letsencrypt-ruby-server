@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+require "rake"
+
+task :environment do
+  $LOAD_PATH.unshift(".")
+  require "config/environment"
+end
+
+task application: :environment do
+  require "config/application"
+end
+
+desc "Ruby console with loaded env"
+task console: :environment do
+  require "irb"
+  require "config/application"
+
+  ARGV.clear
+  IRB.start
+end
+
+Dir[File.join("task", "**", "*.rake")].each { |f| load f }

@@ -1,0 +1,16 @@
+# Ignore all mac finder configuration files
+.DS_Store
+
+# Ignore the IDE configuration files
+.atom
+.idea
+
+# Ignore dotenv configuration
+.env
+
+# Ignore coverage output
+src/coverage/
+
+# Ignore all logfiles and tempfiles
+src/db/schema.rb
+*.pid
