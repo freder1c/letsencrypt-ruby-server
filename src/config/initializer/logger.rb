@@ -24,5 +24,5 @@ module Application
     end
   end
 
-  Logger.level = "info"sssss
+  Logger.level = "info"
 end
