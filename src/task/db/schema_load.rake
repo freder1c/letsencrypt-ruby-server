@@ -7,7 +7,7 @@ namespace :db do
       input_path = File.join("db", "schema.sql")
 
       command = []
-      command << ["PGPASSWORD=\"#{ENV.fetch("DB_PASSWORD", nil)}\"", ] if ENV.fetch("DB_PASSWORD", nil)
+      command << ["PGPASSWORD=\"#{ENV.fetch("DB_PASSWORD", nil)}\""] if ENV.fetch("DB_PASSWORD", nil)
       command << ["psql"]
       command << ["-h", ENV.fetch("DB_HOST", nil)] if ENV.fetch("DB_HOST", nil)
       command << [ENV.fetch("DB_NAME"), "<", input_path]
