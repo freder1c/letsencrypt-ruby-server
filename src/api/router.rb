@@ -29,6 +29,10 @@ module Application
         request.is(method: :post) { render(Controller::Session.new(parse(request)).create) }
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
       end
+    rescue Error::Unauthorized
+      render Response.new(status: 401, body: { error: "Unauthorized" })
+    rescue Error::Forbidden
+      render Response.new(status: 403, body: { error: "Forbidden" })
     rescue Error::UnprocessableEntity => exception
       Logger.warn(exception.details)
       render Response.new(status: 422, body: { error: "Unprocessable Entity", details: exception.details })
