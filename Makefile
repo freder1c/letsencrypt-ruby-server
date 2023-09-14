@@ -8,23 +8,23 @@ export BUILD
 build:
 	docker build -t $(APP_IMAGE) .
 
-dev: build
+dev:
 	docker-compose run --service-ports --rm application "bash"
 
-run: build
+run:
 	docker-compose run --service-ports --rm application
 
-schemaupdate: build
-	docker-compose run --service-ports --rm application "rake db:schema:load"
+schemaupdate:
+	docker-compose run application rake db:schema:load
 
-rspec: build
-	docker-compose run --service-ports --rm application "rspec"
+rubocop:
+	docker-compose run application rubocop
 
-rubocop: build
-	docker-compose run --service-ports --rm application "rubocop"
+rspec:
+	docker-compose run application rspec
 
 test:
-	make -k rubocop schemaupdate rspec
+	make rubocop schemaupdate rspec
 
 clean:
 	docker-compose down --remove-orphans
