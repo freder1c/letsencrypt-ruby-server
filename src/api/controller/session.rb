@@ -4,7 +4,8 @@ module Application
   module Controller
     class Session < Base
       def create
-        Response.new(status: 201, body: { token: SecureRandom.uuid })
+        session = Command::Session::Create.new.call(request.payload)
+        Response.new(status: 201, body: { token: session.id })
       end
 
       def delete
