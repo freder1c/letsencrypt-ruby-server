@@ -15,7 +15,7 @@ run: build
 	docker-compose run --service-ports --rm application
 
 schemaupdate: build
-	docker-compose run --service-ports --rm application "rake db:schema:update"
+	docker-compose run --service-ports --rm application "rake db:schema:load"
 
 rspec: build
 	docker-compose run --service-ports --rm application "rspec"
