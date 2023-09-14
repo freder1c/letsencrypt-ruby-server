@@ -23,7 +23,7 @@ rubocop:
 rspec:
 	docker-compose run application rspec
 
-test:
+test: build
 	make rubocop schemaupdate rspec
 
 clean:
