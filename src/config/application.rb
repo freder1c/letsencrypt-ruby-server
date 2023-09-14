@@ -18,4 +18,4 @@ module Application
   end
 end
 
-Dir["#{Pathname.new("/app").join("app")}/**/*.rb"].each { |file| require file }
+Dir["#{Pathname.new("/app").join("app")}/**/*.rb"].sort.each { |file| require file }

@@ -22,3 +22,8 @@ Naming/ConstantName:
 Style/StringConcatenation:
   Exclude:
     - "config/initializer/logger.rb"
+
+Lint/RedundantDirGlobSort:
+  Exclude:
+    - "config/api.rb"
+    - "config/application.rb"

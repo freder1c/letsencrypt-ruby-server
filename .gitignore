@@ -12,5 +12,6 @@
 src/coverage/
 
 # Ignore all logfiles and tempfiles
+src/spec/examples.txt
 src/db/schema.rb
 *.pid
