@@ -23,6 +23,14 @@ RSpec.describe "/session", :controller do
       end
     end
 
+    context "account is locked" do
+      let(:account) { create(:account, locked_at: Time.current) }
+
+      it "should respond with unprocessable entity status" do
+        expect(subject.status).to eq(403)
+      end
+    end
+
     context "email is missing" do
       let(:email) { nil }
 

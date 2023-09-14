@@ -14,6 +14,9 @@ dev: build
 run: build
 	docker-compose run --service-ports --rm application
 
+schemaupdate: build
+	docker-compose run --service-ports --rm application "rake db:schema:update"
+
 rspec: build
 	docker-compose run --service-ports --rm application "rspec"
 
@@ -21,7 +24,7 @@ rubocop: build
 	docker-compose run --service-ports --rm application "rubocop"
 
 test:
-	make -k rubocop rspec
+	make -k rubocop schemaupdate rspec
 
 clean:
 	docker-compose down --remove-orphans
