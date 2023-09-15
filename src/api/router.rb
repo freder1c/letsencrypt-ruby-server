@@ -29,6 +29,10 @@ module Application
         request.is(method: :post) { render(Controller::Session.new(parse(request)).create) }
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
       end
+
+      request.on("order") do
+        request.is(method: :post) { render(Controller::Order.new(parse(request)).create) }
+      end
     rescue Error::Unauthorized
       render Response.new(status: 401, body: { error: "Unauthorized" })
     rescue Error::Forbidden

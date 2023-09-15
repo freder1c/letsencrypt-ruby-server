@@ -7,3 +7,10 @@ RSpec.shared_context :controller, controller: true do
     subject.body
   end
 end
+
+RSpec.shared_context :auth_controller, auth: true do
+  before { header "Authentication", session.id }
+
+  let(:account) { create(:account) }
+  let(:session) { create(:session, account_id: account.id) }
+end
