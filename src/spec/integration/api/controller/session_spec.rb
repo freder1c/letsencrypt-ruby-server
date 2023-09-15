@@ -40,8 +40,13 @@ RSpec.describe "/session", :controller do
     end
   end
 
-  describe "#DELETE" do
+  fdescribe "#DELETE" do
     subject { delete("/session") }
+
+    before { header "Authentication", session.id }
+
+    let(:session) { create(:session, account:) }
+    let(:account) { create(:account) }
 
     it "should respond with empty response" do
       expect(subject.status).to eq(204)

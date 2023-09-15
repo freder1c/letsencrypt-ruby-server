@@ -13,6 +13,9 @@ module Application
       end
 
       def delete
+        authenticate!
+
+        Command::Session::Delete.new.call(request.token)
         Response.new(status: 204, body: nil)
       end
     end
