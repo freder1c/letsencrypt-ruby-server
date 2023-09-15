@@ -3,6 +3,11 @@
 module Application
   module Repository
     class Account < Base
+      def find(id)
+        sql = table.where(id:)
+        wrap_data(sql.first, data: Data::Account, request: sql)
+      end
+
       def find_by_email(email)
         sql = table.where(email:)
         wrap_data(sql.first, data: Data::Account, request: sql)

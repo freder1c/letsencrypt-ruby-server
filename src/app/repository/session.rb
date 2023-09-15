@@ -3,6 +3,11 @@
 module Application
   module Repository
     class Session < Base
+      def find(id)
+        sql = table.where(id:)
+        wrap_data(sql.first, data: Data::Session, request: sql)
+      end
+
       def create(session)
         session.created_at = Time.current
         session.id = table.insert(session.attributes_without_nils)
