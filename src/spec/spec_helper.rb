@@ -4,6 +4,8 @@ $LOAD_PATH.unshift(".")
 
 ENV["S3_BUCKET_NAME"] = "test-bucket"
 
+require "setup/simplecov"
+
 require "pry"
 require "webmock/rspec"
 require "rack/test"
@@ -14,7 +16,6 @@ require "config/api"
 require "setup/controller"
 require "setup/database_cleaner"
 require "setup/factory"
-require "setup/simplecov"
 
 Application::Logger.level = :error
 

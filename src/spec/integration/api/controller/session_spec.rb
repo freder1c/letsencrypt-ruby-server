@@ -40,7 +40,7 @@ RSpec.describe "/session", :controller do
     end
   end
 
-  fdescribe "#DELETE" do
+  describe "#DELETE" do
     subject { delete("/session") }
 
     before { header "Authentication", session.id }
