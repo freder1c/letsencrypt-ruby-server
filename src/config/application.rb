@@ -10,7 +10,7 @@ module Application
   end
 
   def s3_bucket_name
-    ENV.fetch("S3_BUCKET_NAME")
+    ENV.fetch("AWS_S3_BUCKET_NAME")
   end
 
   def started_at
