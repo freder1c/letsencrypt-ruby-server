@@ -6,8 +6,8 @@ module Application
       attr_reader :details
 
       def initialize(details)
-        super
         @details = details
+        super("Unprocessable entity.")
       end
     end
   end

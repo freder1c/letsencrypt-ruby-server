@@ -30,13 +30,25 @@ module Application
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
       end
 
-      request.on("order") do
+      request.on("keys") do
+        request.on("generate") do
+          request.is(method: :post) { render(Controller::Key.new(parse(request)).generate) }
+        end
+
+        request.on("upload") do
+          request.is(method: :post) { render(Controller::Key.new(parse(request)).upload) }
+        end
+      end
+
+      request.on("orders") do
         request.is(method: :post) { render(Controller::Order.new(parse(request)).create) }
       end
     rescue Error::Unauthorized
       render Response.new(status: 401, body: { error: "Unauthorized" })
     rescue Error::Forbidden
       render Response.new(status: 403, body: { error: "Forbidden" })
+    rescue Error::NotFound => exception
+      render Response.new(status: 404, body: { error: "Not Found", details: exception.details })
     rescue Error::UnprocessableEntity => exception
       Logger.warn(exception.details)
       render Response.new(status: 422, body: { error: "Unprocessable Entity", details: exception.details })
