@@ -6,7 +6,7 @@ module Application
       def create(order)
         order.created_at = Time.current
         order.id = table.insert(order.attributes_without_nils)
-        order
+        order.persisted!
       end
 
       private

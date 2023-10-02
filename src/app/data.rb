@@ -49,10 +49,10 @@ module Application
         !changed.empty?
       end
 
-      def synced!(attrs = [])
-        to_sync = attrs.size.positive? ? attrs : self.class.attributes
+      def persisted!(attrs = [])
+        to_persist = attrs.size.positive? ? attrs : self.class.attributes
 
-        to_sync.each do |key, _|
+        to_persist.each do |key, _|
           current = instance_variable_get("@#{key}")
           instance_variable_set("@#{key}_was", current) if current != instance_variable_get("@#{key}_was")
         end

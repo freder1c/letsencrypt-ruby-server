@@ -45,10 +45,8 @@ ALTER TABLE public.accounts OWNER TO root;
 --
 
 CREATE TABLE public.keys (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    account_id text NOT NULL,
-    file_path text NOT NULL,
-    hash text NOT NULL,
+    id text NOT NULL,
+    account_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL
 );
 
@@ -64,7 +62,7 @@ CREATE TABLE public.orders (
     account_id text NOT NULL,
     status text,
     created_at timestamp(6) without time zone NOT NULL,
-    key_id uuid NOT NULL
+    key_id text NOT NULL
 );
 
 
@@ -143,10 +141,10 @@ CREATE UNIQUE INDEX accounts_email_index ON public.accounts USING btree (email);
 
 
 --
--- Name: keys_account_id_index; Type: INDEX; Schema: public; Owner: root
+-- Name: keys_id_account_id_index; Type: INDEX; Schema: public; Owner: root
 --
 
-CREATE INDEX keys_account_id_index ON public.keys USING btree (account_id);
+CREATE UNIQUE INDEX keys_id_account_id_index ON public.keys USING btree (id, account_id);
 
 
 --

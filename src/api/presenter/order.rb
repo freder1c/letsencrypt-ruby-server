@@ -6,6 +6,7 @@ module Application
       def record(order)
         {
           id: order.id,
+          key_id: order.key_id,
           status: order.status,
           created_at: order.created_at.iso8601
         }

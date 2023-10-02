@@ -43,3 +43,4 @@ Style/FrozenStringLiteralComment:
 Metrics/BlockLength:
   Exclude:
     - "spec/integration/**/*"
+    - "api/router.rb"
