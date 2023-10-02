@@ -7,5 +7,5 @@ Aws.config.update(
   # endpoint: ENV.fetch("AWS_S3_ENDPOINT"),
   # region: ENV.fetch("AWS_S3_REGION")
   endpoint: ENV.fetch("AWS_S3_ENDPOINT", nil),
-  ignore_configured_endpoint_urls: ENV.fetch("AWS_S3_IGNORE_CONFIGURED_ENDPOINT", true)
+  ignore_configured_endpoint_urls: ENV.fetch("AWS_S3_IGNORE_CONFIGURED_ENDPOINT", 0).to_i.positive?
 )
