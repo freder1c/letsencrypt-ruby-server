@@ -13,6 +13,10 @@ module Application
     ENV.fetch("AWS_S3_BUCKET_NAME")
   end
 
+  def acme_directory
+    ENV.fetch("ACME_DIRECTORY")
+  end
+
   def started_at
     @started_at ||= Time.current
   end

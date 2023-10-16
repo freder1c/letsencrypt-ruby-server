@@ -52,6 +52,8 @@ module Application
     rescue Error::UnprocessableEntity => exception
       Logger.warn(exception.details)
       render Response.new(status: 422, body: { error: "Unprocessable Entity", details: exception.details })
+    rescue Error::ServiceUnavailable
+      render Response.new(status: 503, body: { error: "Service Unavailable" })
     rescue StandardError => exception
       Logger.error("#{exception.message}\n\n\nBacktrace:\n" + exception.backtrace.join("\n"))
       render Response.new(status: 500, body: { error: "Internal Server Error" })

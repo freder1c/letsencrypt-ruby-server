@@ -5,7 +5,7 @@ module Application
     class Order < Base
       def create(order)
         order.created_at = Time.current
-        order.id = table.insert(order.attributes_without_nils)
+        order.id = table.insert(order.attributes_without_nils.except(:challenge_content))
         order.persisted!
       end
 

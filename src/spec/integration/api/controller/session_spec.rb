@@ -23,6 +23,15 @@ RSpec.describe "/session", :controller do
       end
     end
 
+    context "password is invalid" do
+      let(:password) { "not-valid" }
+
+      it "should respond with unauthorized status and increase failed attempts" do
+        expect(subject.status).to eq(401)
+        expect(Application::DB[:accounts].where(id: account.id).first[:failed_attempts]).to eq(1)
+      end
+    end
+
     context "account is locked" do
       let(:account) { create(:account, locked_at: Time.current) }
 

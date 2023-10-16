@@ -5,7 +5,7 @@ module Application
     module Session
       Create = Dry::Schema.Params do
         required(:email).value(format?: Validator.email_format)
-        required(:password).value(format?: Validator.password_format)
+        required(:password).filled(:string)
       end
     end
   end
