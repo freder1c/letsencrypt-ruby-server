@@ -6,7 +6,7 @@ module Application
       Create = Dry::Schema.Params do
         required(:key_id).filled(:string)
         required(:identifier).filled(:string)
-        required(:challenge_type).value(included_in?: %w[http dns])
+        required(:preferred_challenge_type).value(included_in?: %w[http dns])
       end
     end
   end

@@ -50,6 +50,8 @@ CREATE TABLE public.challenges (
     url text NOT NULL,
     token text NOT NULL,
     status text NOT NULL,
+    type text NOT NULL,
+    content jsonb NOT NULL,
     created_at timestamp(6) without time zone NOT NULL
 );
 
@@ -79,7 +81,6 @@ CREATE TABLE public.orders (
     key_id text NOT NULL,
     status text,
     identifier text NOT NULL,
-    challenge_type text NOT NULL,
     created_at timestamp(6) without time zone NOT NULL
 );
 

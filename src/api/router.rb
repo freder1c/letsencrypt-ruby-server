@@ -16,6 +16,12 @@ module Application
     def render(resp)
       response.headers["Content-Type"] = resp.type
       response.headers["X-Request"] = Thread.current[:process_id]
+
+      if resp.page
+        response.headers["Page-Number"] = resp.page.number
+        response.headers["Page-Size"] = resp.page.size
+      end
+
       response.status = resp.status
       resp.body
     end
@@ -42,6 +48,14 @@ module Application
 
       request.on("orders") do
         request.is(method: :post) { render(Controller::Order.new(parse(request)).create) }
+        request.on(String) do |order_id|
+          request.on("challenges") do
+            request.is(method: :get) { render(Controller::Challenge.new(parse(request, params: { order_id: })).all) }
+            request.on(String) do |id|
+              request.is(method: :get) { render(Controller::Challenge.new(parse(request, params: { id:, order_id: })).find) }
+            end
+          end
+        end
       end
     rescue Error::Unauthorized
       render Response.new(status: 401, body: { error: "Unauthorized" })

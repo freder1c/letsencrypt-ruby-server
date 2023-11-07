@@ -8,6 +8,8 @@ module Application
       attribute :url
       attribute :token
       attribute :status
+      attribute :type
+      attribute :content
       attribute :created_at
 
       def order=(order)

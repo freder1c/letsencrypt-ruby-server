@@ -18,6 +18,7 @@ services:
       AWS_S3_ENDPOINT: http://localstack:4566
       AWS_S3_IGNORE_CONFIGURED_ENDPOINT: 1
       CORS_HOST: "*"
+      HOST: "localhost:3000"
       DB_HOST: database
       DB_NAME: letsencrypt
       DB_PASSWORD: supersecurepassword

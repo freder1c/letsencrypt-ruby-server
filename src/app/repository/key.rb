@@ -4,7 +4,7 @@ module Application
   module Repository
     class Key < Base
       def find(id, options = {})
-        sql = table.where(id:, account_id: account.id)
+        sql = table.where(id:, account_id:)
         key = wrap_data(sql.first, data: Data::Key, request: sql)
         return key unless key.present?
 

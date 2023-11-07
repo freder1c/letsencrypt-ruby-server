@@ -4,7 +4,7 @@ RSpec.describe "/orders", :controller, :auth do
   describe "#POST" do
     subject { post("/orders", params.to_json) }
 
-    let(:challenge_type) { "dns" }
+    let(:preferred_challenge_type) { "dns" }
     let(:client_authorization_instance) { instance_double(Acme::Client::Resources::Authorization) }
     let(:client_instance) { instance_double(Acme::Client) }
     let(:client_order_instance) { instance_double(Acme::Client::Resources::Order) }
@@ -12,7 +12,7 @@ RSpec.describe "/orders", :controller, :auth do
     let(:identifier) { "*.example.de" }
     let(:key) { create(:key, account:) }
     let(:key_id) { key.id }
-    let(:params) { { key_id:, identifier:, challenge_type: } }
+    let(:params) { { key_id:, identifier:, preferred_challenge_type: } }
 
     before do
       allow(Acme::Client).to receive(:new).and_return(client_instance)
@@ -31,7 +31,7 @@ RSpec.describe "/orders", :controller, :auth do
 
     it "should respond with token" do
       expect(subject.status).to eq(201)
-      expect(response_body.keys).to eq(%w[id key_id status challenge_type challenge_content created_at])
+      expect(response_body.keys).to eq(%w[id key_id status created_at])
       expect(response_body["status"]).to eq("created")
       expect(response_body["id"]).to match(Application::Validator.uuid_format)
     end

@@ -8,16 +8,19 @@ module Application
           params = Validator.validate(Validator::Order::Create, params)
           key = find_key(params[:key_id])
           order = Data::Order.new(account:, key:)
-          order.attributes = params.except(:key_id)
+          order.identifier = params[:identifier]
 
-          client = init_client(key)
-          challenge = place_order(client, order)
-
+          challenge = place_order(order, key)
           permit_state(order, challenge)
+
           order
         end
 
         private
+
+        def order_repository
+          @order_repository ||= Repository::Order.new(account)
+        end
 
         def find_key(id)
           Key::Find.new(account).call(id, with_file: true)
@@ -25,16 +28,8 @@ module Application
           raise Error::UnprocessableEntity, id: [{ error: :invalid, value: id }]
         end
 
-        def init_client(key)
-          client = Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
-          client.new_account(contact: "mailto:#{account.email}", terms_of_service_agreed: true) unless client.kid
-          client
-        end
-
-        def place_order(client, order)
-          client_order = client.new_order(identifiers: [order.identifier])
-          authorization = client_order.authorizations.first
-          raise Error::ServiceUnavailable unless authorization
+        def place_order(order, key)
+          authorization = order_repository.place(order, key)
 
           challenge = set_http_challenge(authorization.http, order) if authorization.http
           challenge = set_dns_challenge(authorization.dns, order) if authorization.dns
@@ -44,21 +39,28 @@ module Application
           challenge
         end
 
-        def set_http_challenge(http, order)
-          order.challenge_type = "http"
-          order.challenge_content = render_http_content(http)
-          Data::Challenge.new(url: http.url, status: http.status, token: http.token)
+        def set_http_challenge(http, _order)
+          Data::Challenge.new(
+            url: http.url,
+            status: http.status,
+            token: http.token,
+            type: "http",
+            content: render_http_content(http)
+          )
         end
 
-        def set_dns_challenge(dns, order)
-          order.challenge_type = "dns"
-          order.challenge_content = render_dns_content(dns)
-          Data::Challenge.new(url: dns.url, status: dns.status, token: dns.token)
+        def set_dns_challenge(dns, _order)
+          Data::Challenge.new(
+            url: dns.url,
+            status: dns.status,
+            token: dns.token,
+            type: "dns",
+            content: render_dns_content(dns)
+          )
         end
 
         def render_http_content(http)
-          { content_type: http.content_type, file_content: http.file_content, filename: http.filename,
-            token: http.token }
+          { file_content: http.file_content, filename: http.filename, token: http.token }
         end
 
         def render_dns_content(dns)
@@ -66,7 +68,7 @@ module Application
         end
 
         def permit_state(order, challenge)
-          challenge.order = Repository::Order.new(account).create(order)
+          challenge.order = order_repository.create(order)
           Repository::Challenge.new(account).create(challenge)
         end
       end

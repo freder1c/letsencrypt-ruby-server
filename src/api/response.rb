@@ -2,12 +2,13 @@
 
 module Application
   class Response
-    attr_reader :status, :type
+    attr_reader :status, :type, :page
 
-    def initialize(status:, body:, type: "application/json")
+    def initialize(status:, body:, type: "application/json", page: nil)
       @status = status
       @body = body
       @type = type
+      @page = page
     end
 
     def body
