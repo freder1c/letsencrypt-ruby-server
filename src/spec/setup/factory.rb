@@ -12,7 +12,7 @@ module FactoryBot
     module_function
 
     def insert(table, instance, except: [])
-      attrs = instance.attributes_without_nils.except(*except)
+      attrs = Application::Helper::Sequel.sanitize(instance.attributes_without_nils.except(*except))
       instance.id = Application::DB[table].insert(attrs)
       instance
     end

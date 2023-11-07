@@ -10,7 +10,13 @@ module Application
       end
 
       def present!
-        record(object)
+        object.instance_of?(Data::Collection) ? collection : record(object)
+      end
+
+      private
+
+      def collection
+        object.map { |entry| record(entry) }
       end
     end
   end

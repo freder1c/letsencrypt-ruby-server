@@ -6,6 +6,9 @@ module Application
       attribute :id
       attribute :account_id
       attribute :key_id
+      attribute :identifier
+      attribute :challenge_type
+      attribute :challenge_content
       attribute :status, default: "created"
       attribute :created_at
 

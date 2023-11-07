@@ -4,6 +4,7 @@ require "rubygems"
 require "bundler/setup"
 require "securerandom"
 require "openssl"
+require "acme-client"
 
 require "config/initializer/logger"
 require "config/initializer/sequel"

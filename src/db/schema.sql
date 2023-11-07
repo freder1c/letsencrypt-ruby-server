@@ -41,6 +41,24 @@ CREATE TABLE public.accounts (
 ALTER TABLE public.accounts OWNER TO root;
 
 --
+-- Name: challenges; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.challenges (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    order_id uuid NOT NULL,
+    url text NOT NULL,
+    token text NOT NULL,
+    status text NOT NULL,
+    type text NOT NULL,
+    content jsonb NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+ALTER TABLE public.challenges OWNER TO root;
+
+--
 -- Name: keys; Type: TABLE; Schema: public; Owner: root
 --
 
@@ -60,9 +78,10 @@ ALTER TABLE public.keys OWNER TO root;
 CREATE TABLE public.orders (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     account_id text NOT NULL,
+    key_id text NOT NULL,
     status text,
-    created_at timestamp(6) without time zone NOT NULL,
-    key_id text NOT NULL
+    identifier text NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -99,6 +118,14 @@ ALTER TABLE public.sessions OWNER TO root;
 
 ALTER TABLE ONLY public.accounts
     ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: challenges challenges_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.challenges
+    ADD CONSTRAINT challenges_pkey PRIMARY KEY (id);
 
 
 --

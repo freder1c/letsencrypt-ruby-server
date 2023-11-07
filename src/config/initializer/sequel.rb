@@ -29,6 +29,6 @@ end
 
 module Application
   DB = establish!
-  # DB.extension(:pg_json)
+  DB.extension(:pg_json)
   DB.sql_log_level = :debug
 end
