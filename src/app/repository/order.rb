@@ -16,8 +16,11 @@ module Application
 
       def place(order, key)
         client_instance = client(key)
-        client_order = client_instance.new_order(identifiers: [order.identifier]) # TODO: consider preferred challange type
-        raise Error::ServiceUnavailable unless authorization = client_order.authorizations.first
+        # TODO: consider preferred challange type
+        client_order = client_instance.new_order(identifiers: [order.identifier])
+        authorization = client_order.authorizations.first
+
+        raise Error::ServiceUnavailable unless authorization
 
         authorization
       end

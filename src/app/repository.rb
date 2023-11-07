@@ -24,7 +24,7 @@ module Application
       end
 
       def wrap_collection(sql, data:, page:)
-        Data::Collection.new(sql.map { |attr| data.new(attr) }, page: page)
+        Data::Collection.new(sql.map { |attr| data.new(attr) }, page:)
       end
 
       def s3_client

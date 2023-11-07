@@ -16,14 +16,14 @@ module Application
     def render(resp)
       response.headers["Content-Type"] = resp.type
       response.headers["X-Request"] = Thread.current[:process_id]
-
-      if resp.page
-        response.headers["Page-Number"] = resp.page.number
-        response.headers["Page-Size"] = resp.page.size
-      end
-
+      add_page_headers(resp) if resp.page
       response.status = resp.status
       resp.body
+    end
+
+    def add_page_headers(resp)
+      response.headers["Page-Number"] = resp.page.number
+      response.headers["Page-Size"] = resp.page.size
     end
 
     route do |request|
@@ -52,7 +52,9 @@ module Application
           request.on("challenges") do
             request.is(method: :get) { render(Controller::Challenge.new(parse(request, params: { order_id: })).all) }
             request.on(String) do |id|
-              request.is(method: :get) { render(Controller::Challenge.new(parse(request, params: { id:, order_id: })).find) }
+              request.is(method: :get) do
+                render(Controller::Challenge.new(parse(request, params: { id:, order_id: })).find)
+              end
             end
           end
         end

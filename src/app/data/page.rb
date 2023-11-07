@@ -11,7 +11,7 @@ module Application
         attr[:number] = params.dig(:page, :number).to_i if params.dig(:page, :number)
         attr[:size] = params.dig(:page, :size).to_i if params.dig(:page, :size)
 
-        self.new(attr)
+        new(attr)
       end
 
       def offset
