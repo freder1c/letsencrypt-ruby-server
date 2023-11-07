@@ -79,9 +79,14 @@ CREATE TABLE public.orders (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     account_id text NOT NULL,
     key_id text NOT NULL,
+    url text NOT NULL,
     status text,
     identifier text NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL
+    finalize_url text NOT NULL,
+    certificate_url text,
+    created_at timestamp(6) without time zone NOT NULL,
+    finalized_at timestamp(6) without time zone,
+    expires_at timestamp(6) without time zone NOT NULL
 );
 
 

@@ -16,6 +16,13 @@ module Application
         challenge = Command::Challenge::Find.new(account).call(request.params[:id], order_id: request.params[:order_id])
         Response.new(status: 200, body: Presenter::Challenge.new(challenge).present!)
       end
+
+      def validate
+        authenticate!
+
+        Command::Challenge::Validate.new(account).call(request.params[:id], order_id: request.params[:order_id])
+        Response.new(status: 202, body: nil)
+      end
     end
   end
 end
