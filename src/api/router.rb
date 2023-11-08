@@ -68,6 +68,11 @@ module Application
               render(Controller::Order.new(parse(request, params: { id: })).finalize)
             end
           end
+          request.on("resolve") do
+            request.is(method: :post) do
+              render(Controller::Order.new(parse(request, params: { id: })).resolve)
+            end
+          end
         end
       end
     rescue Error::Unauthorized

@@ -25,16 +25,16 @@ module Application
       end
 
       def validate(challenge, key)
-        client_challenge = acme_challenge(challenge, key)
-        client_challenge.request_validation
+        challenge_request = acme_challenge(challenge, key)
+        challenge_request.request_validation
       rescue Acme::Client::Error::NotFound
         table.where(id: challenge.id).update(status: "not_found")
       end
 
       def resolve(challenge, key)
-        client_challenge = acme_challenge(challenge, key)
-        client_challenge.reload # fetch current status
-        challenge.status = client_challenge.status
+        challenge_request = acme_challenge(challenge, key)
+        challenge_request.reload # fetch current status
+        challenge.status = challenge_request.status
         table.filter(id: challenge.id).update(challenge.changed) if challenge.changed?
         challenge.persisted!
       end

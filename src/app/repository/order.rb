@@ -14,10 +14,11 @@ module Application
         order.persisted!
       end
 
+      # TODO: consider preferred challange type
       def place(order, key)
-        client_instance = acme_client(key)
-        # TODO: consider preferred challange type
-        client_order = client_instance.new_order(identifiers: [order.identifier])
+        client = acme_client(key)
+        new_acme_account(client)
+        client_order = client.new_order(identifiers: [order.identifier])
         enrich_order(order, client_order.to_h)
         authorization = client_order.authorizations.first
 
@@ -26,18 +27,24 @@ module Application
         authorization
       end
 
+      # TODO: Use different key for account and csr, as same is not allowed
       def finalize(order, key)
-        client_instance = acme_client(key) # TODO: Use different key for account and csr, as same is not allowed
+        client = acme_client(key)
         csr = Acme::Client::CertificateRequest.new(private_key: key.file, subject: { common_name: order.identifier })
-        order_request = acme_order(client_instance, order)
-
-        # TODO: Add background process to validate challenge state and update DB entry
-        # Get status with => order_request.status
-        # Poll status with => order_request.reload
-        #
-        # If sucessful status will change to "valid"
-
+        order_request = acme_order(client, order)
         order_request.finalize(csr:)
+        order.status = order_request.status
+        table.filter(id: order.id).update(order.changed) if order.changed?
+        order.persisted!
+      end
+
+      def resolve(order, key)
+        client = acme_client(key)
+        order_request = acme_order(client, order)
+        order_request.reload # fetch current status
+        order.status = order_request.status
+        table.filter(id: order.id).update(order.changed) if order.changed?
+        order.persisted!
       end
 
       private
@@ -46,18 +53,21 @@ module Application
         DB[:orders]
       end
 
+      def acme_client(key)
+        Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
+      end
+
+      def new_acme_account(client)
+        client.new_account(contact: "mailto:#{account.email}", terms_of_service_agreed: true) unless client.kid
+        client
+      end
+
       def enrich_order(order, hash)
         order.url = hash[:url]
         order.status = hash[:status]
         order.certificate_url = hash[:certificate_url]
         order.expires_at = Time.parse(hash[:expires]).utc
         order.finalize_url = hash[:finalize_url]
-      end
-
-      def acme_client(key)
-        client = Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
-        client.new_account(contact: "mailto:#{account.email}", terms_of_service_agreed: true) unless client.kid
-        client
       end
 
       def acme_order(acme_client, order)
