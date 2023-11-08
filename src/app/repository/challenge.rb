@@ -25,9 +25,18 @@ module Application
       end
 
       def validate(challenge, key)
-        validate_dns(challenge, key) if challenge.type == "dns"
+        client_challenge = acme_challenge(challenge, key)
+        client_challenge.request_validation
       rescue Acme::Client::Error::NotFound
         table.where(id: challenge.id).update(status: "not_found")
+      end
+
+      def resolve(challenge, key)
+        client_challenge = acme_challenge(challenge, key)
+        client_challenge.reload # fetch current status
+        challenge.status = client_challenge.status
+        table.filter(id: challenge.id).update(challenge.changed) if challenge.changed?
+        challenge.persisted!
       end
 
       private
@@ -45,20 +54,29 @@ module Application
         sql
       end
 
-      def validate_dns(challenge, key)
-        client = Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
-        dns_challenge = Acme::Client::Resources::Challenges::DNS01.new(client,
-                                                                       status: challenge.status,
-                                                                       url: challenge.url,
-                                                                       token: challenge.token)
+      def acme_client(key)
+        Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
+      end
 
-        # TODO: Add background process to validate challenge state and update DB entry
-        # Get status with => dns_challenge.status
-        # Poll status with => dns_challenge.reload
-        #
-        # If sucessful status will change to "valid"
+      def acme_challenge(challenge, key)
+        client = acme_client(key)
 
-        dns_challenge.request_validation
+        return acme_dns_challenge(challenge, client) if challenge.type == "dns"
+        return acme_http_challenge(challenge, client) if challenge.type == "http"
+
+        raise Error::ChallengeTypeNotSupported, type: challenge.type
+      end
+
+      def acme_dns_challenge(challenge, client)
+        Acme::Client::Resources::Challenges::DNS01.new(
+          client, status: challenge.status, url: challenge.url, token: challenge.token
+        )
+      end
+
+      def acme_http_challenge(challenge, client)
+        Acme::Client::Resources::Challenges::HTTP01.new(
+          client, status: challenge.status, url: challenge.url, token: challenge.token
+        )
       end
     end
   end

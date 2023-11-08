@@ -10,8 +10,8 @@ module Application
           order = Data::Order.new(account:, key:)
           order.identifier = params[:identifier]
 
-          challenge = place_order(order, key)
-          permit_state(order, challenge)
+          challenges = place_order(order, key)
+          permit_state(order, challenges)
 
           order
         end
@@ -22,6 +22,10 @@ module Application
           @order_repository ||= Repository::Order.new(account)
         end
 
+        def challenge_repository
+          @challenge_repository ||= Repository::Challenge.new(account)
+        end
+
         def find_key(id)
           Key::Find.new(account).call(id, with_file: true)
         rescue Error::NotFound
@@ -29,47 +33,45 @@ module Application
         end
 
         def place_order(order, key)
-          authorization = order_repository.place(order, key)
+          auth = order_repository.place(order, key)
+          http_challenge = build_challenge(auth.http, "http") if auth.http
+          dns_challenge = build_challenge(auth.dns, "dns") if auth.dns
+          challenges = [http_challenge, dns_challenge].compact
 
-          challenge = set_http_challenge(authorization.http, order) if authorization.http
-          challenge = set_dns_challenge(authorization.dns, order) if authorization.dns
+          raise Error::ServiceUnavailable if challenges.empty?
 
-          raise Error::ServiceUnavailable unless challenge
-
-          challenge
+          challenges
         end
 
-        def set_http_challenge(http, _order)
+        def build_challenge(auth, type)
           Data::Challenge.new(
-            url: http.url,
-            status: http.status,
-            token: http.token,
-            type: "http",
-            content: render_http_content(http)
+            url: auth.url, status: auth.status, token: auth.token, type:, content: build_content(auth, type)
           )
         end
 
-        def set_dns_challenge(dns, _order)
-          Data::Challenge.new(
-            url: dns.url,
-            status: dns.status,
-            token: dns.token,
-            type: "dns",
-            content: render_dns_content(dns)
-          )
+        def build_content(auth, type)
+          case type
+          when "http" then http_content(auth)
+          when "dns" then dns_content(auth)
+          else raise Error::ChallengeTypeNotSupported, type:
+          end
         end
 
-        def render_http_content(http)
-          { file_content: http.file_content, filename: http.filename, token: http.token }
+        def http_content(auth)
+          { file_content: auth.file_content, filename: auth.filename, token: auth.token }
         end
 
-        def render_dns_content(dns)
-          { record_name: dns.record_name, record_type: dns.record_type, record_content: dns.record_content }
+        def dns_content(auth)
+          { record_name: auth.record_name, record_type: auth.record_type, record_content: auth.record_content }
         end
 
-        def permit_state(order, challenge)
-          challenge.order = order_repository.create(order)
-          Repository::Challenge.new(account).create(challenge)
+        def permit_state(order, challenges)
+          order_repository.create(order)
+
+          challenges.each do |challenge|
+            challenge.order = order
+            challenge_repository.create(challenge)
+          end
         end
       end
     end
