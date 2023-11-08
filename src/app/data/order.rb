@@ -6,11 +6,14 @@ module Application
       attribute :id
       attribute :account_id
       attribute :key_id
+      attribute :url
+      attribute :status, default: "pending"
       attribute :identifier
-      attribute :challenge_type
-      attribute :challenge_content
-      attribute :status, default: "created"
+      attribute :finalize_url
+      attribute :certificate_url
       attribute :created_at
+      attribute :finalized_at
+      attribute :expires_at
 
       def account=(account)
         raise Error::WrongAssignement unless account.is_a?(Data::Account)

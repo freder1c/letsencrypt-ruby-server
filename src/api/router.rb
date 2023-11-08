@@ -30,31 +30,37 @@ module Application
       request.on("status") do
         request.is(method: :get) { render(Controller::Status.call) }
       end
-
       request.on("session") do
         request.is(method: :post) { render(Controller::Session.new(parse(request)).create) }
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
       end
-
       request.on("keys") do
         request.on("generate") do
           request.is(method: :post) { render(Controller::Key.new(parse(request)).generate) }
         end
-
         request.on("upload") do
           request.is(method: :post) { render(Controller::Key.new(parse(request)).upload) }
         end
       end
-
       request.on("orders") do
         request.is(method: :post) { render(Controller::Order.new(parse(request)).create) }
-        request.on(String) do |order_id|
+        request.on(String) do |id|
           request.on("challenges") do
-            request.is(method: :get) { render(Controller::Challenge.new(parse(request, params: { order_id: })).all) }
-            request.on(String) do |id|
+            request.is(method: :get) { render(Controller::Challenge.new(parse(request, params: { order_id: id })).all) }
+            request.on(String) do |challenge_id|
               request.is(method: :get) do
-                render(Controller::Challenge.new(parse(request, params: { id:, order_id: })).find)
+                render(Controller::Challenge.new(parse(request, params: { id: challenge_id, order_id: id })).find)
               end
+              request.on("validate") do
+                request.is(method: :post) do
+                  render(Controller::Challenge.new(parse(request, params: { id: challenge_id, order_id: id })).validate)
+                end
+              end
+            end
+          end
+          request.on("finalize") do
+            request.is(method: :post) do
+              render(Controller::Order.new(parse(request, params: { id: })).finalize)
             end
           end
         end

@@ -24,6 +24,12 @@ module Application
         challenge.persisted!
       end
 
+      def validate(challenge, key)
+        validate_dns(challenge, key) if challenge.type == "dns"
+      rescue Acme::Client::Error::NotFound
+        table.where(id: challenge.id).update(status: "not_found")
+      end
+
       private
 
       def table
@@ -37,6 +43,22 @@ module Application
       def filter(sql, options)
         sql = sql.where(order_id: options[:order_id]) if options[:order_id]
         sql
+      end
+
+      def validate_dns(challenge, key)
+        client = Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
+        dns_challenge = Acme::Client::Resources::Challenges::DNS01.new(client,
+                                                                       status: challenge.status,
+                                                                       url: challenge.url,
+                                                                       token: challenge.token)
+
+        # TODO: Add background process to validate challenge state and update DB entry
+        # Get status with => dns_challenge.status
+        # Poll status with => dns_challenge.reload
+        #
+        # If sucessful status will change to "valid"
+
+        dns_challenge.request_validation
       end
     end
   end
