@@ -13,15 +13,22 @@ module Application
       def find
         authenticate!
 
-        challenge = Command::Challenge::Find.new(account).call(request.params[:id], order_id: request.params[:order_id])
-        Response.new(status: 200, body: Presenter::Challenge.new(challenge).present!)
+        order = Command::Order::Find.new(account).call(request.params[:id], order_id: request.params[:order_id])
+        Response.new(status: 200, body: Presenter::Order.new(order).present!)
       end
 
       def finalize
         authenticate!
 
-        Command::Order::Finalize.new(account).call(request.params[:id])
-        Response.new(status: 202, body: nil)
+        order = Command::Order::Finalize.new(account).call(request.params[:id])
+        Response.new(status: 202, body: Presenter::Order.new(order).present!)
+      end
+
+      def resolve
+        authenticate!
+
+        order = Command::Order::Resolve.new(account).call(request.params[:id])
+        Response.new(status: 200, body: Presenter::Order.new(order).present!)
       end
     end
   end

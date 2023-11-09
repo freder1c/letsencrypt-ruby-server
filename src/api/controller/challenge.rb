@@ -23,6 +23,14 @@ module Application
         Command::Challenge::Validate.new(account).call(request.params[:id], order_id: request.params[:order_id])
         Response.new(status: 202, body: nil)
       end
+
+      def resolve
+        authenticate!
+
+        challenge = Command::Challenge::Resolve.new(account).call(request.params[:id],
+                                                                  order_id: request.params[:order_id])
+        Response.new(status: 200, body: Presenter::Challenge.new(challenge).present!)
+      end
     end
   end
 end

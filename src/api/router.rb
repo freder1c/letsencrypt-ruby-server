@@ -56,11 +56,21 @@ module Application
                   render(Controller::Challenge.new(parse(request, params: { id: challenge_id, order_id: id })).validate)
                 end
               end
+              request.on("resolve") do
+                request.is(method: :post) do
+                  render(Controller::Challenge.new(parse(request, params: { id: challenge_id, order_id: id })).resolve)
+                end
+              end
             end
           end
           request.on("finalize") do
             request.is(method: :post) do
               render(Controller::Order.new(parse(request, params: { id: })).finalize)
+            end
+          end
+          request.on("resolve") do
+            request.is(method: :post) do
+              render(Controller::Order.new(parse(request, params: { id: })).resolve)
             end
           end
         end
