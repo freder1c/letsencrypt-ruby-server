@@ -12,6 +12,7 @@ module Application
       attribute :unlock_token
       attribute :locked_at
       attribute :locale
+      attribute :key_id
       attribute :created_at
 
       def password=(password)
@@ -24,6 +25,12 @@ module Application
 
       def locked?
         locked_at.present?
+      end
+
+      def key=(key)
+        raise Error::WrongAssignement unless key.is_a?(Data::Key)
+
+        self.key_id = key.id
       end
     end
   end

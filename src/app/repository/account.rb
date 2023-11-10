@@ -13,9 +13,9 @@ module Application
         wrap_data(sql.first, data: Data::Account, request: sql)
       end
 
-      def update(account)
+      def update
         table.filter(id: account.id).update(account.changed) if account.changed?
-        account
+        account.persisted!
       end
 
       private

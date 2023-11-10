@@ -18,9 +18,9 @@ module Application
       def place(order, key)
         client = acme_client(key)
         new_acme_account(client)
-        client_order = client.new_order(identifiers: [order.identifier])
-        enrich_order(order, client_order.to_h)
-        authorization = client_order.authorizations.first
+        order_request = client.new_order(identifiers: [order.identifier])
+        enrich_order(order, order_request.to_h)
+        authorization = order_request.authorizations.first
 
         raise Error::ServiceUnavailable unless authorization
 
@@ -42,7 +42,7 @@ module Application
         client = acme_client(key)
         order_request = acme_order(client, order)
         order_request.reload # fetch current status
-        order.status = order_request.status
+        enrich_order(order, order_request.to_h)
         table.filter(id: order.id).update(order.changed) if order.changed?
         order.persisted!
       end

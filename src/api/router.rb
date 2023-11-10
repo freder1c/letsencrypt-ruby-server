@@ -30,6 +30,9 @@ module Application
       request.on("status") do
         request.is(method: :get) { render(Controller::Status.call) }
       end
+      request.on("account") do
+        request.is(method: :patch) { render(Controller::Account.new(parse(request)).update) }
+      end
       request.on("session") do
         request.is(method: :post) { render(Controller::Session.new(parse(request)).create) }
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
