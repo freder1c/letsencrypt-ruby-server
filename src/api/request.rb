@@ -12,6 +12,8 @@ module Application
     end
 
     def payload
+      return body if body.is_a?(Hash)
+
       JSON.parse(body, symbolize_names: true)
     rescue JSON::ParserError
       {}

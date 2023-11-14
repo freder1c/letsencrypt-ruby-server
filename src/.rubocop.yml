@@ -44,3 +44,7 @@ Metrics/BlockLength:
   Exclude:
     - "spec/integration/**/*"
     - "api/router.rb"
+
+Metrics/ClassLength:
+  Exclude:
+    - "api/router.rb"

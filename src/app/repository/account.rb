@@ -3,6 +3,12 @@
 module Application
   module Repository
     class Account < Base
+      def create(account)
+        account.created_at = Time.current
+        account.id = table.insert(account.attributes_without_nils)
+        account.persisted!
+      end
+
       def find(id)
         query = table.where(id:)
         wrap_data(query.first, data:, request: query)

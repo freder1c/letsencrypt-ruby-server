@@ -4,8 +4,8 @@ module Application
   module Controller
     class Account < Base
       def create
-        account = Command::Account::Create.new(nil).call(request.params)
-        Response.new(status: 200, body: Presenter::Account.new(account).present!)
+        account = Command::Account::Create.new.call(request.payload)
+        Response.new(status: 201, body: Presenter::Account.new(account).present!)
       end
 
       def update_key

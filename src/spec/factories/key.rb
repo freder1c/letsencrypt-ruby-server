@@ -9,7 +9,8 @@ FactoryBot.define do
 
     after(:create) do |key|
       client = Aws::S3::Client.new(force_path_style: true)
-      key.file = OpenSSL::PKey::RSA.new(File.read("spec/fixtures/private.pem"))
+      path = Application.root_path.join("spec", "fixtures", "private.pem")
+      key.file = OpenSSL::PKey::RSA.new(File.read(path))
       client.put_object(bucket: Application.s3_bucket_name, key: "#{key.account_id}/#{key.id}.pem", body: key.file.to_s)
     end
   end

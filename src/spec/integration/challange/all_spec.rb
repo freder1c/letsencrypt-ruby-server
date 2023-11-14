@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "#GET /orders/:id/challenges", :controller, :auth do
-  subject { get("/orders/#{order_id}/challenges") }
+  subject { get("/orders/#{order_id}/challenges?page=2") }
 
   let!(:challenge) { create(:challenge, order:) }
   let(:id) { challenge.id }

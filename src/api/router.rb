@@ -6,11 +6,18 @@ require "roda"
 module Application
   class Router < Roda
     def parse(request, params: {})
-      Request.new(
-        token: request.get_header("HTTP_AUTHENTICATION"),
-        body: request.body.read,
-        params: request.params.merge(params).symbolize_keys
-      )
+      body = multipart?(request) ? sanitize_params(request, params) : request.body.read
+      params = multipart?(request) ? {} : sanitize_params(request, params)
+
+      Request.new(token: request.get_header("HTTP_AUTHENTICATION"), body:, params:)
+    end
+
+    def multipart?(request)
+      request.get_header("CONTENT_TYPE")&.match(%r{multipart/form-data}) != nil
+    end
+
+    def sanitize_params(request, params)
+      request.params.merge(params).symbolize_keys
     end
 
     def render(resp)
@@ -31,12 +38,13 @@ module Application
         request.is(method: :get) { render(Controller::Status.call) }
       end
       request.on("account") do
+        request.is(method: :post) { render(Controller::Account.new(parse(request)).create) }
         request.on("email") do
-          request.is(method: :put) do
-            render(Controller::Account.new(parse(request)).update_email)
-          end
+          request.is(method: :put) { render(Controller::Account.new(parse(request)).update_email) }
         end
-        request.on("key") { request.is(method: :put) { render(Controller::Account.new(parse(request)).update_key) } }
+        request.on("key") do
+          request.is(method: :put) { render(Controller::Account.new(parse(request)).update_key) }
+        end
         request.on("locale") do
           request.is(method: :put) do
             render(Controller::Account.new(parse(request)).update_locale)
@@ -56,6 +64,11 @@ module Application
         end
         request.on("upload") do
           request.is(method: :post) { render(Controller::Key.new(parse(request)).upload) }
+        end
+        request.on(String) do |id|
+          request.on("download") do
+            request.is(method: :get) { render(Controller::Key.new(parse(request, params: { id: })).download) }
+          end
         end
       end
       request.on("orders") do

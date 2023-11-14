@@ -11,7 +11,7 @@ module Application
       attribute :failed_attempts
       attribute :unlock_token
       attribute :locked_at
-      attribute :locale
+      attribute :locale, default: "en-US"
       attribute :key_id
       attribute :created_at
 
