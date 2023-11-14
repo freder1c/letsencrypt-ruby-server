@@ -1,4 +1,4 @@
-[![Build and test](https://github.com/freder1c/letsencrypt-ruby-server/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/freder1c/letsencrypt-ruby-server/actions/workflows/build_and_test.yml)
+[![Build and test](https://github.com/freder1c/letsencrypt-ruby-server/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/freder1c/letsencrypt-ruby-server/actions/workflows/build_and_test.yml)
 
 # Letsencrypt ruby server
 
