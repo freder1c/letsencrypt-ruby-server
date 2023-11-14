@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+system("rake db:schema:update")
+
 $LOAD_PATH.unshift(".")
 
 require "config/environment"
