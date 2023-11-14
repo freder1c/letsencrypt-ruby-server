@@ -11,7 +11,7 @@ module Application
           file = OpenSSL::PKey::RSA.new(file_params[:tempfile].read)
           key = Data::Key.new(id: Digest::SHA512.hexdigest(file.to_s), account:, file:)
           Repository::Key.new(account).create(key)
-        rescue OpenSSL::PKey::RSAError => exception
+        rescue OpenSSL::PKey::RSAError => _exception
           raise Error::UnprocessableEntity, file: [{ error: :invalid_format }]
         end
       end

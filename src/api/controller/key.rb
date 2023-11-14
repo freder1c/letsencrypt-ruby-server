@@ -16,6 +16,13 @@ module Application
         key = Command::Key::Upload.new(account).call(request.body)
         Response.new(status: 201, body: Presenter::Key.new(key).present!)
       end
+
+      def download
+        authenticate!
+
+        key = Command::Key::Find.new(account).call(request.params[:id], with_file: true)
+        Response.new(status: 200, body: key.file.to_s, type: "application/x-pem-file")
+      end
     end
   end
 end

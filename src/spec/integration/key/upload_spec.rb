@@ -3,7 +3,7 @@
 RSpec.describe "#POST /keys/upload", :controller, :auth do
   subject { post("/keys/upload", params) }
 
-  let(:file) { Rack::Test::UploadedFile.new(file_path) }
+  let(:file) { Rack::Test::UploadedFile.new(file_path, "application/x-pem-file") }
   let(:file_path) { Application.root_path.join("spec", "fixtures", "private.pem") }
   let(:params) { { file: } }
 

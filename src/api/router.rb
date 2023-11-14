@@ -6,14 +6,14 @@ require "roda"
 module Application
   class Router < Roda
     def parse(request, params: {})
-      body = is_multipart?(request) ? sanitize_params(request, params) : request.body.read
-      params = is_multipart?(request) ? {} : sanitize_params(request, params)
+      body = multipart?(request) ? sanitize_params(request, params) : request.body.read
+      params = multipart?(request) ? {} : sanitize_params(request, params)
 
       Request.new(token: request.get_header("HTTP_AUTHENTICATION"), body:, params:)
     end
 
-    def is_multipart?(request)
-      request.get_header("CONTENT_TYPE")&.match(/multipart\/form-data/) != nil
+    def multipart?(request)
+      request.get_header("CONTENT_TYPE")&.match(%r{multipart/form-data}) != nil
     end
 
     def sanitize_params(request, params)
@@ -64,6 +64,11 @@ module Application
         end
         request.on("upload") do
           request.is(method: :post) { render(Controller::Key.new(parse(request)).upload) }
+        end
+        request.on(String) do |id|
+          request.on("download") do
+            request.is(method: :get) { render(Controller::Key.new(parse(request, params: { id: })).download) }
+          end
         end
       end
       request.on("orders") do
