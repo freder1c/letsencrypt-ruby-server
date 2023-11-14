@@ -6,6 +6,7 @@ FactoryBot.define do
 
     email { "test@example.com" }
     password { "1!Secret" }
+    locale { "en-US" }
     created_at { Time.current }
   end
 end

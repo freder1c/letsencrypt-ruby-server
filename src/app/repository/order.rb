@@ -3,9 +3,20 @@
 module Application
   module Repository
     class Order < Base
+      def all(options = {})
+        page = Data::Page.from_params(options)
+        query = table.then { |sql| filter(sql, options) }
+        wrap_collection(query.all, data:, page:)
+      end
+
       def find(id)
-        sql = table.where(id:, account_id:)
-        wrap_data(sql.first, data: Data::Order, request: sql)
+        query = table.where(id:, account_id:)
+        wrap_data(query.first, data:, request: query)
+      end
+
+      def find_for_key_id(key_id)
+        query = table.where(key_id:, account_id:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def create(order)
@@ -18,9 +29,9 @@ module Application
       def place(order, key)
         client = acme_client(key)
         new_acme_account(client)
-        client_order = client.new_order(identifiers: [order.identifier])
-        enrich_order(order, client_order.to_h)
-        authorization = client_order.authorizations.first
+        order_request = client.new_order(identifiers: [order.identifier])
+        enrich_order(order, order_request.to_h)
+        authorization = order_request.authorizations.first
 
         raise Error::ServiceUnavailable unless authorization
 
@@ -42,7 +53,7 @@ module Application
         client = acme_client(key)
         order_request = acme_order(client, order)
         order_request.reload # fetch current status
-        order.status = order_request.status
+        enrich_order(order, order_request.to_h)
         table.filter(id: order.id).update(order.changed) if order.changed?
         order.persisted!
       end
@@ -51,6 +62,14 @@ module Application
 
       def table
         DB[:orders]
+      end
+
+      def data
+        Data::Order
+      end
+
+      def filter(query, options)
+        query.then { |sql| options[:key_id] ? sql.where(key_id: options[:key_id]) : sql }
       end
 
       def acme_client(key)

@@ -4,8 +4,8 @@ module Application
   module Repository
     class Session < Base
       def find(id)
-        sql = table.where(id:)
-        wrap_data(sql.first, data: Data::Session, request: sql)
+        query = table.where(id:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def create(session)
@@ -23,6 +23,10 @@ module Application
 
       def table
         DB[:sessions]
+      end
+
+      def data
+        Data::Session
       end
     end
   end

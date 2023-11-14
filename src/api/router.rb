@@ -30,6 +30,22 @@ module Application
       request.on("status") do
         request.is(method: :get) { render(Controller::Status.call) }
       end
+      request.on("account") do
+        request.on("email") do
+          request.is(method: :put) do
+            render(Controller::Account.new(parse(request)).update_email)
+          end
+        end
+        request.on("key") { request.is(method: :put) { render(Controller::Account.new(parse(request)).update_key) } }
+        request.on("locale") do
+          request.is(method: :put) do
+            render(Controller::Account.new(parse(request)).update_locale)
+          end
+        end
+        request.on("password") do
+          request.is(method: :put) { render(Controller::Account.new(parse(request)).update_password) }
+        end
+      end
       request.on("session") do
         request.is(method: :post) { render(Controller::Session.new(parse(request)).create) }
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }

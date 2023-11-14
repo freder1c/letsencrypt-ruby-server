@@ -4,24 +4,28 @@ module Application
   module Repository
     class Account < Base
       def find(id)
-        sql = table.where(id:)
-        wrap_data(sql.first, data: Data::Account, request: sql)
+        query = table.where(id:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def find_by_email(email)
-        sql = table.where(email:)
-        wrap_data(sql.first, data: Data::Account, request: sql)
+        query = table.where(email:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def update(account)
         table.filter(id: account.id).update(account.changed) if account.changed?
-        account
+        account.persisted!
       end
 
       private
 
       def table
         DB[:accounts]
+      end
+
+      def data
+        Data::Account
       end
     end
   end

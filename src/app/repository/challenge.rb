@@ -5,17 +5,13 @@ module Application
     class Challenge < Base
       def all(options = {})
         page = Data::Page.from_params(options)
-
-        sql = table
-        sql = filter(sql, options)
-
-        wrap_collection(sql.all, data:, page:)
+        query = table.then { |sql| filter(sql, options) }
+        wrap_collection(query.all, data:, page:)
       end
 
       def find(id, options = {})
-        sql = table.where(id:)
-        sql = filter(sql, options)
-        wrap_data(sql.first, data:, request: sql)
+        query = table.where(id:).then { |sql| filter(sql, options) }
+        wrap_data(query.first, data:, request: query)
       end
 
       def create(challenge)
@@ -49,9 +45,8 @@ module Application
         Data::Challenge
       end
 
-      def filter(sql, options)
-        sql = sql.where(order_id: options[:order_id]) if options[:order_id]
-        sql
+      def filter(query, options)
+        query.then { |sql| options[:order_od] ? sql.where(order_od: options[:order_od]) : sql }
       end
 
       def acme_client(key)
