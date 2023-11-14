@@ -31,12 +31,13 @@ module Application
         request.is(method: :get) { render(Controller::Status.call) }
       end
       request.on("account") do
+        request.is(method: :post) { render(Controller::Account.new(parse(request)).create) }
         request.on("email") do
-          request.is(method: :put) do
-            render(Controller::Account.new(parse(request)).update_email)
-          end
+          request.is(method: :put) { render(Controller::Account.new(parse(request)).update_email) }
         end
-        request.on("key") { request.is(method: :put) { render(Controller::Account.new(parse(request)).update_key) } }
+        request.on("key") do
+          request.is(method: :put) { render(Controller::Account.new(parse(request)).update_key) }
+        end
         request.on("locale") do
           request.is(method: :put) do
             render(Controller::Account.new(parse(request)).update_locale)

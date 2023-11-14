@@ -7,7 +7,7 @@ RSpec.describe "#POST /orders", :controller, :auth do
   let(:acme_client) { instance_double(Acme::Client) }
   let(:acme_dns) { instance_double(Acme::Client::Resources::Challenges::DNS01) }
   let(:acme_order) { instance_double(Acme::Client::Resources::Order) }
-  let(:identifier) { "*.shedulr.io" }
+  let(:identifier) { "*.example.com" }
   let(:key) { create(:key, account:) }
   let(:key_id) { key.id }
   let(:params) { { key_id:, identifier:, preferred_challenge_type: } }

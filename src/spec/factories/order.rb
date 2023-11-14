@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :order, class: "Application::Data::Order" do
     to_create { |instance| FactoryBot::Storage.insert(:orders, instance) }
 
-    identifier { "*.shedulr.io" }
+    identifier { "*.example.com" }
     url { "https://acme-staging-v02.api.letsencrypt.org/acme/order/120472004/12106331364" }
     finalize_url { "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/120472004/12106331364" }
     status { "created" }
