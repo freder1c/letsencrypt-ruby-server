@@ -49,3 +49,12 @@ make test
 
 Test will be run on each PR with
 [a github action](https://github.com/freder1c/letsencrypt-ruby-server/blob/main/.github/workflows/build_and_test.yml).
+
+
+## Planned steps
+
+There are a few things still missing. I still plan to add:
+
+- Emails support to send emails for email verification and password reset
+- Forgot password functionality
+- Websockets, so status of challenge and order can be polled in background and pushed to browser
