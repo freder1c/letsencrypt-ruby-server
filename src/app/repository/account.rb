@@ -4,13 +4,13 @@ module Application
   module Repository
     class Account < Base
       def find(id)
-        sql = table.where(id:)
-        wrap_data(sql.first, data:, request: sql)
+        query = table.where(id:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def find_by_email(email)
-        sql = table.where(email:)
-        wrap_data(sql.first, data:, request: sql)
+        query = table.where(email:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def update(account)

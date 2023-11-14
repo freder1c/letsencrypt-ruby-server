@@ -5,18 +5,18 @@ module Application
     class Order < Base
       def all(options = {})
         page = Data::Page.from_params(options)
-        sql = table.then { |sql| filter(sql, options) }
-        wrap_collection(sql.all, data:, page:)
+        query = table.then { |sql| filter(sql, options) }
+        wrap_collection(query.all, data:, page:)
       end
 
       def find(id)
-        sql = table.where(id:, account_id:)
-        wrap_data(sql.first, data:, request: sql)
+        query = table.where(id:, account_id:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def find_for_key_id(key_id)
-        sql = table.where(key_id:, account_id:)
-        wrap_data(sql.first, data:, request: sql)
+        query = table.where(key_id:, account_id:)
+        wrap_data(query.first, data:, request: query)
       end
 
       def create(order)
@@ -68,8 +68,8 @@ module Application
         Data::Order
       end
 
-      def filter(sql, options)
-        sql.then { |sql| options[:key_id] ? sql.where(key_id: options[:key_id]) : sql }
+      def filter(query, options)
+        query.then { |sql| options[:key_id] ? sql.where(key_id: options[:key_id]) : sql }
       end
 
       def acme_client(key)

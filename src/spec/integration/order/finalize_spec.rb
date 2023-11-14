@@ -23,4 +23,3 @@ RSpec.describe "#POST /orders/:id/finalize", :controller, :auth do
     expect(response_body["status"]).to eq("processing")
   end
 end
-

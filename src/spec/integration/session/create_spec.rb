@@ -14,7 +14,7 @@ RSpec.describe "#POST /session", :controller do
     expect(response_body["token"]).to match(Application::Validator.uuid_format)
   end
 
-  context "email is invalid" do
+  context "when email is invalid" do
     let(:email) { "invalid@email.com" }
 
     it "should respond with unauthorized status" do
@@ -22,7 +22,7 @@ RSpec.describe "#POST /session", :controller do
     end
   end
 
-  context "password is invalid" do
+  context "when password is invalid" do
     let(:password) { "not-valid" }
 
     it "should respond with unauthorized status and increase failed attempts" do
@@ -31,7 +31,7 @@ RSpec.describe "#POST /session", :controller do
     end
   end
 
-  context "account is locked" do
+  context "when account is locked" do
     let(:account) { create(:account, locked_at: Time.current) }
 
     it "should respond with unprocessable entity status" do
@@ -39,7 +39,7 @@ RSpec.describe "#POST /session", :controller do
     end
   end
 
-  context "email is missing" do
+  context "when email is missing" do
     let(:email) { nil }
 
     it "should respond with unprocessable entity status" do

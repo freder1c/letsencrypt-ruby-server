@@ -31,9 +31,17 @@ module Application
         request.is(method: :get) { render(Controller::Status.call) }
       end
       request.on("account") do
-        request.on("email") { request.is(method: :put) { render(Controller::Account.new(parse(request)).update_email) } }
+        request.on("email") do
+          request.is(method: :put) do
+            render(Controller::Account.new(parse(request)).update_email)
+          end
+        end
         request.on("key") { request.is(method: :put) { render(Controller::Account.new(parse(request)).update_key) } }
-        request.on("locale") { request.is(method: :put) { render(Controller::Account.new(parse(request)).update_locale) } }
+        request.on("locale") do
+          request.is(method: :put) do
+            render(Controller::Account.new(parse(request)).update_locale)
+          end
+        end
         request.on("password") do
           request.is(method: :put) { render(Controller::Account.new(parse(request)).update_password) }
         end

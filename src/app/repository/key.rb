@@ -4,8 +4,8 @@ module Application
   module Repository
     class Key < Base
       def find(id, options = {})
-        sql = table.where(id:, account_id:)
-        key = wrap_data(sql.first, data: Data::Key, request: sql)
+        query = table.where(id:, account_id:)
+        key = wrap_data(query.first, data:, request: query)
         return key unless key.present?
 
         get_file_for(key) if options[:with_file]
@@ -23,6 +23,10 @@ module Application
 
       def table
         DB[:keys]
+      end
+
+      def data
+        Data::Key
       end
 
       def storage_key(key)
