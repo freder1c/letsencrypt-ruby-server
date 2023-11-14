@@ -27,9 +27,16 @@ module Application
         end
 
         def find_key(id)
-          Key::Find.new(account).call(id, with_file: true)
+          key = Key::Find.new(account).call(id, with_file: true)
+          check_if_key_is_account_key(key)
         rescue Error::NotFound
-          raise Error::UnprocessableEntity, id: [{ error: :invalid, value: id }]
+          raise Error::UnprocessableEntity, key_id: [{ error: :invalid, value: id }]
+        end
+
+        def check_if_key_is_account_key(key)
+          return key if key.id != account.key_id
+
+          raise Error::UnprocessableEntity, key_id: [{ error: :cant_be_same_as_account_key, value: key.id }]
         end
 
         def place_order(order, key)

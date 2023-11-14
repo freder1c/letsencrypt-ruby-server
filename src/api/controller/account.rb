@@ -8,11 +8,18 @@ module Application
         Response.new(status: 200, body: Presenter::Account.new(account).present!)
       end
 
-      def update
+      def update_key
         authenticate!
 
-        Command::Account::Update.new(account).call(request.payload)
-        Response.new(status: 200, body: Presenter::Account.new(account).present!)
+        Command::Account::UpdateKey.new(account).call(request.payload)
+        Response.new(status: 204, body: nil)
+      end
+
+      def update_locale
+        authenticate!
+
+        Command::Account::UpdateLocale.new(account).call(request.payload)
+        Response.new(status: 204, body: nil)
       end
     end
   end

@@ -34,7 +34,7 @@ CREATE TABLE public.accounts (
     unlock_token text,
     locked_at timestamp(6) without time zone,
     locale text,
-    key_id uuid,
+    key_id text,
     created_at timestamp(6) without time zone NOT NULL
 );
 

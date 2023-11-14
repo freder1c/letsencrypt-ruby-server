@@ -5,15 +5,15 @@ module Application
     class Account < Base
       def find(id)
         sql = table.where(id:)
-        wrap_data(sql.first, data: Data::Account, request: sql)
+        wrap_data(sql.first, data:, request: sql)
       end
 
       def find_by_email(email)
         sql = table.where(email:)
-        wrap_data(sql.first, data: Data::Account, request: sql)
+        wrap_data(sql.first, data:, request: sql)
       end
 
-      def update
+      def update(account)
         table.filter(id: account.id).update(account.changed) if account.changed?
         account.persisted!
       end
@@ -22,6 +22,10 @@ module Application
 
       def table
         DB[:accounts]
+      end
+
+      def data
+        Data::Account
       end
     end
   end

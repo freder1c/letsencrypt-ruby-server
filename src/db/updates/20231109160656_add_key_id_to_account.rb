@@ -3,7 +3,7 @@
 Sequel.migration do
   change do
     alter_table(:accounts) do
-      add_column :key_id, "uuid"
+      add_column :key_id, "text"
     end
   end
 end

@@ -3,11 +3,11 @@
 module Application
   module Command
     module Account
-      class Update < Base
+      class UpdateLocale < Base
         def call(params = {})
-          params = Validator.validate(Validator::Account::Update, params)
+          params = Validator.validate(Validator::Account::UpdateLocale, params)
           account.attributes = params
-          Repository::Account.new(account).update
+          Repository::Account.new.update(account)
         end
       end
     end
