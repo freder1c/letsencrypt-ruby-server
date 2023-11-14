@@ -17,7 +17,7 @@ module Application
         def check_if_email_is_taken(account)
           existing = Repository::Account.new(nil).find_by_email(account.email)
 
-          raise Error::UnprocessableEntity.new(email: [{ error: :taken }]) if existing.present?
+          raise Error::UnprocessableEntity, email: [{ error: :taken }] if existing.present?
         end
       end
     end

@@ -6,11 +6,18 @@ require "roda"
 module Application
   class Router < Roda
     def parse(request, params: {})
-      Request.new(
-        token: request.get_header("HTTP_AUTHENTICATION"),
-        body: request.body.read,
-        params: request.params.merge(params).symbolize_keys
-      )
+      body = is_multipart?(request) ? sanitize_params(request, params) : request.body.read
+      params = is_multipart?(request) ? {} : sanitize_params(request, params)
+
+      Request.new(token: request.get_header("HTTP_AUTHENTICATION"), body:, params:)
+    end
+
+    def is_multipart?(request)
+      request.get_header("CONTENT_TYPE")&.match(/multipart\/form-data/) != nil
+    end
+
+    def sanitize_params(request, params)
+      request.params.merge(params).symbolize_keys
     end
 
     def render(resp)

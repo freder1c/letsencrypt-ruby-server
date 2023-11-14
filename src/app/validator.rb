@@ -24,9 +24,14 @@ module Application
     end
 
     def resolve_error_string(message)
-      {
-        error: error_message_to_key(message)
-      }
+      error = error_message_to_key(message)
+      return { error: } if error
+
+      if result = message.match(/must be one of: (.*)/)
+        return { error: "not_in_list", valid_options: result[1] }
+      end
+
+      raise Error::UnknownErrorMessage, message: message
     end
 
     def error_message_to_key(message)
