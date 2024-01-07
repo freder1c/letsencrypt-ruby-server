@@ -5,11 +5,11 @@ module Application
     module Challenge
       class Validate < Base
         def call(id, options = {})
-          order = Order::Find.new(account).call(options[:order_id])
+          Order::Find.new(account).call(options[:order_id])
           challenge = Repository::Challenge.new(account).find(id, options)
           challenge_found?(challenge)
 
-          key = Key::Find.new(account).call(order.key_id, with_file: true)
+          key = Key::Find.new(account).call(account.key_id, with_file: true)
           Repository::Challenge.new(account).validate(challenge, key)
         end
 

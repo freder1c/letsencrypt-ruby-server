@@ -38,6 +38,7 @@ module Application
         request.is(method: :get) { render(Controller::Status.call) }
       end
       request.on("account") do
+        request.is(method: :get) { render(Controller::Account.new(parse(request)).fetch) }
         request.is(method: :post) { render(Controller::Account.new(parse(request)).create) }
         request.on("email") do
           request.is(method: :put) { render(Controller::Account.new(parse(request)).update_email) }
@@ -59,6 +60,7 @@ module Application
         request.is(method: :delete) { render(Controller::Session.new(parse(request)).delete) }
       end
       request.on("keys") do
+        request.is(method: :get) { render(Controller::Key.new(parse(request)).all) }
         request.on("generate") do
           request.is(method: :post) { render(Controller::Key.new(parse(request)).generate) }
         end

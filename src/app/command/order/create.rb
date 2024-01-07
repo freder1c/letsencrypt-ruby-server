@@ -10,7 +10,7 @@ module Application
           order = Data::Order.new(account:, key:)
           order.identifier = params[:identifier]
 
-          challenges = place_order(order, key)
+          challenges = place_order(order)
           permit_state(order, challenges)
 
           order
@@ -27,7 +27,7 @@ module Application
         end
 
         def find_key(id)
-          key = Key::Find.new(account).call(id, with_file: true)
+          key = Key::Find.new(account).call(id)
           check_if_key_is_account_key(key)
         rescue Error::NotFound
           raise Error::UnprocessableEntity, key_id: [{ error: :invalid, value: id }]
@@ -39,10 +39,16 @@ module Application
           raise Error::UnprocessableEntity, key_id: [{ error: :cant_be_same_as_account_key, value: key.id }]
         end
 
-        def place_order(order, key)
-          auth = order_repository.place(order, key)
-          http_challenge = build_challenge(auth.http, "http") if auth.http
-          dns_challenge = build_challenge(auth.dns, "dns") if auth.dns
+        def account_key
+          @acount_key ||= Key::Find.new(account).call(account.key_id, with_file: true)
+        rescue Error::NotFound
+          raise Error::UnprocessableEntity, account: [{ error: :no_key_attached }]
+        end
+
+        def place_order(order)
+          auth = order_repository.place(order, account_key)
+          http_challenge = build_challenge(auth.http, "http")
+          dns_challenge = build_challenge(auth.dns, "dns")
           challenges = [http_challenge, dns_challenge].compact
 
           raise Error::ServiceUnavailable if challenges.empty?
@@ -51,6 +57,8 @@ module Application
         end
 
         def build_challenge(auth, type)
+          return nil unless auth
+
           Data::Challenge.new(
             url: auth.url, status: auth.status, token: auth.token, type:, content: build_content(auth, type)
           )

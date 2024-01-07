@@ -6,8 +6,8 @@ module Application
       class Resolve < Base
         def call(id)
           order = Find.new(account).call(id)
-          key = Key::Find.new(account).call(order.key_id, with_file: true)
-          Repository::Order.new(account).resolve(order, key)
+          account_key = Key::Find.new(account).call(account.key_id, with_file: true)
+          Repository::Order.new(account).resolve(order, account_key)
         end
       end
     end

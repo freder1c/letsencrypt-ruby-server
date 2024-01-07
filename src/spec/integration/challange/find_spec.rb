@@ -5,7 +5,7 @@ RSpec.describe "#GET /orders/:order_id/challenges/:challenge_id", :controller, :
 
   let(:challenge) { create(:challenge, order:) }
   let(:id) { challenge.id }
-  let(:key) { create(:key, account:) }
+  let(:key) { create(:key, :private, account:) }
   let(:order) { create(:order, account:, key:) }
   let(:order_id) { order.id }
 

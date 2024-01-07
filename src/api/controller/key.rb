@@ -3,6 +3,13 @@
 module Application
   module Controller
     class Key < Base
+      def all
+        authenticate!
+
+        keys = Command::Key::All.new(account).call
+        Response.new(status: 200, body: Presenter::Key.new(keys).present!, page: keys.page)
+      end
+
       def generate
         authenticate!
 

@@ -3,7 +3,7 @@
 RSpec.describe "PUT /account/key", :controller, :auth do
   subject { put("/account/key", params.to_json) }
 
-  let(:key) { create(:key, account:) }
+  let(:key) { create(:key, :private, account:) }
   let(:key_id) { key.id }
   let(:params) { { key_id: } }
 

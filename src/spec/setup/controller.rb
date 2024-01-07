@@ -9,8 +9,12 @@ RSpec.shared_context :controller, controller: true do
 end
 
 RSpec.shared_context :auth_controller, auth: true do
-  before { header "Authentication", session.id }
-
   let(:account) { create(:account) }
   let(:session) { create(:session, account_id: account.id) }
+
+  before do
+    header "Authentication", session.id
+    key = create(:key, :account, account:)
+    Application::DB[:accounts].filter(id: account.id).update(key_id: key.id)
+  end
 end

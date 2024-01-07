@@ -8,7 +8,7 @@ RSpec.describe "#POST /orders", :controller, :auth do
   let(:acme_dns) { instance_double(Acme::Client::Resources::Challenges::DNS01) }
   let(:acme_order) { instance_double(Acme::Client::Resources::Order) }
   let(:identifier) { "*.example.com" }
-  let(:key) { create(:key, account:) }
+  let(:key) { create(:key, :private, account:) }
   let(:key_id) { key.id }
   let(:params) { { key_id:, identifier:, preferred_challenge_type: } }
   let(:preferred_challenge_type) { "dns" }
@@ -42,11 +42,25 @@ RSpec.describe "#POST /orders", :controller, :auth do
     allow(acme_dns).to receive(:record_content).and_return("EqUWe7U1jaYEXVYBvojSm4MMpNSSqv5UsTvFCKkQKOo")
   end
 
-  it "should respond with token" do
+  it "should respond with order" do
     expect(subject.status).to eq(201)
-    expect(response_body.keys).to eq(%w[id key_id status created_at expires_at])
+    expect(response_body.keys).to eq(%w[id key_id status certificate_url created_at expires_at])
     expect(response_body["status"]).to eq("pending")
     expect(response_body["id"]).to match(Application::Validator.uuid_format)
+  end
+
+  context "when account has no key attached" do
+    before do
+      Application::DB[:accounts].filter(id: account.id).update(key_id: nil)
+    end
+
+    it "should respond with unprocessable entity status" do
+      expect(subject.status).to eq(422)
+      expect(response_body).to eq({
+        "details" => { "account" => [{ "error" => "no_key_attached" }] },
+        "error" => "Unprocessable Entity"
+      })
+    end
   end
 
   context "when key_id is missing" do

@@ -2,11 +2,11 @@
 
 module Application
   module Command
-    module Challenge
+    module Key
       class All < Base
         def call(options = {})
-          Order::Find.new(account).call(options[:order_id])
-          Repository::Challenge.new(account).all(options)
+          options[:account_id] = account.id
+          Repository::Key.new(account).all(options)
         end
       end
     end

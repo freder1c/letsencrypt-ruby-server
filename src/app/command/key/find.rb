@@ -5,6 +5,7 @@ module Application
     module Key
       class Find < Base
         def call(id, options = {})
+          options[:account_id] = account.id
           raise Error::NotFound.new("key", id) if (key = Repository::Key.new(account).find(id, options)).nil?
 
           key

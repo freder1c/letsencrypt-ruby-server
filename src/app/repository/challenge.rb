@@ -23,6 +23,7 @@ module Application
       def validate(challenge, key)
         challenge_request = acme_challenge(challenge, key)
         challenge_request.request_validation
+        challenge
       rescue Acme::Client::Error::NotFound
         table.where(id: challenge.id).update(status: "not_found")
       end
@@ -46,7 +47,7 @@ module Application
       end
 
       def filter(query, options)
-        query.then { |sql| options[:order_od] ? sql.where(order_od: options[:order_od]) : sql }
+        query.then { |sql| options[:order_id] ? sql.where(order_id: options[:order_id]) : sql }
       end
 
       def acme_client(key)
