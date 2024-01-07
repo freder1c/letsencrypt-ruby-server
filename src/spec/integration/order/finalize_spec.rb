@@ -17,7 +17,7 @@ RSpec.describe "#POST /orders/:id/finalize", :controller, :auth do
       finalize_url: "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/120472004/12107311774",
       authorization_urls: ["https://acme-staging-v02.api.letsencrypt.org/acme/authz-v3/9328628434"],
       identifiers: [{ type: "dns", value: "*.example.com" }],
-      certificate_url: "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/120472004/12107311774"
+      certificate_url: "https://acme-staging-v02.api.letsencrypt.org/acme/cert/fa3719c081db843c7360de33c0bbce50d70c"
     }
   end
 
