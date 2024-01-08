@@ -3,6 +3,12 @@
 module Application
   module Controller
     class Account < Base
+      def fetch
+        authenticate!
+
+        Response.new(status: 200, body: Presenter::Account.new(account).present!)
+      end
+
       def create
         account = Command::Account::Create.new.call(request.payload)
         Response.new(status: 201, body: Presenter::Account.new(account).present!)

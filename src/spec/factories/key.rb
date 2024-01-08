@@ -2,16 +2,35 @@
 
 FactoryBot.define do
   factory :key, class: "Application::Data::Key" do
-    to_create { |instance| FactoryBot::Storage.insert(:keys, instance) }
+    to_create { |instance| FactoryBot::Storage.insert(:keys, instance, except: [:file]) }
 
-    id { Digest::SHA512.hexdigest(OpenSSL::PKey::RSA.new(File.read("spec/fixtures/private.pem")).to_s) }
     created_at { Time.current }
 
-    after(:create) do |key|
-      client = Aws::S3::Client.new(force_path_style: true)
+    trait :account do
+      path = Application.root_path.join("spec", "fixtures", "account.pem")
+
+      id { Digest::SHA512.hexdigest(OpenSSL::PKey::RSA.new(File.read(path)).to_s) }
+      file { OpenSSL::PKey::RSA.new(File.read(path)) }
+
+      after(:create) { |key| upload_file(key) }
+    end
+
+    trait :private do
       path = Application.root_path.join("spec", "fixtures", "private.pem")
-      key.file = OpenSSL::PKey::RSA.new(File.read(path))
-      client.put_object(bucket: Application.s3_bucket_name, key: "#{key.account_id}/#{key.id}.pem", body: key.file.to_s)
+
+      id { Digest::SHA512.hexdigest(OpenSSL::PKey::RSA.new(File.read(path)).to_s) }
+      file { OpenSSL::PKey::RSA.new(File.read(path)) }
+
+      after(:create) { |key| upload_file(key) }
     end
   end
+end
+
+def upload_file(key)
+  client = Aws::S3::Client.new(force_path_style: true)
+  client.put_object(
+    bucket: Application.s3_bucket_name,
+    key: "#{key.account_id}/#{key.id}.pem",
+    body: key.file.to_s
+  )
 end

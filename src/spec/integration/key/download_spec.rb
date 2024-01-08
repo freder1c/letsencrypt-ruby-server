@@ -3,7 +3,7 @@
 RSpec.describe "#GET /keys/:id/download", :controller, :auth do
   subject { get("/keys/#{key_id}/download") }
 
-  let(:key) { create(:key, account:) }
+  let(:key) { create(:key, :private, account:) }
   let(:key_id) { key.id }
 
   it "should respond download key file" do

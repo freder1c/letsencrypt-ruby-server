@@ -7,7 +7,7 @@ RSpec.describe "#POST /orders/:order_id/challenges/:challenge_id/validate", :con
   let(:client_instance) { instance_double(Acme::Client) }
   let(:dns_challenge_instance) { instance_double(Acme::Client::Resources::Challenges::DNS01) }
   let(:id) { challenge.id }
-  let(:key) { create(:key, account:) }
+  let(:key) { create(:key, :private, account:) }
   let(:order) { create(:order, account:, key:) }
   let(:order_id) { order.id }
 

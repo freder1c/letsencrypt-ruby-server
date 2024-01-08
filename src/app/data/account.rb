@@ -24,7 +24,7 @@ module Application
       end
 
       def locked?
-        locked_at.present?
+        !locked_at.nil?
       end
 
       def key=(key)

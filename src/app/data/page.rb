@@ -3,19 +3,17 @@
 module Application
   module Data
     class Page < Base
-      attribute :number, default: 1
+      attribute :after, default: nil
       attribute :size, default: 50
+
+      alias limit size
 
       def self.from_params(params)
         attr = {}
-        attr[:number] = params.dig(:page, :number).to_i if params.dig(:page, :number)
-        attr[:size] = params.dig(:page, :size).to_i if params.dig(:page, :size)
+        attr[:after] = params[:page_after] if params[:page_after]
+        attr[:size] = params[:page_size]&.to_i if params[:page_size]
 
         new(attr)
-      end
-
-      def offset
-        (number.to_i - 1) * size.to_i
       end
     end
   end

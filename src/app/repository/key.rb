@@ -3,10 +3,16 @@
 module Application
   module Repository
     class Key < Base
+      def all(options = {})
+        page = Data::Page.from_params(options)
+        query = table.then { |sql| filter(sql, options) }.then { |sql| order(sql) }.then { |sql| paginate(sql, page) }
+        wrap_collection(query.all, data:, page:)
+      end
+
       def find(id, options = {})
-        query = table.where(id:, account_id:)
+        query = table.where(id:).then { |sql| filter(sql, options) }
         key = wrap_data(query.first, data:, request: query)
-        return key unless key.present?
+        return key if key.nil?
 
         get_file_for(key) if options[:with_file]
         key
@@ -15,6 +21,7 @@ module Application
       def create(key)
         s3_client.put_object(bucket: Application.s3_bucket_name, key: storage_key(key), body: key.file.to_s)
         key.created_at = Time.current
+
         key.id = table.insert(key.attributes_without_nils.except(:file))
         key.persisted!
       end
@@ -27,6 +34,10 @@ module Application
 
       def data
         Data::Key
+      end
+
+      def filter(query, options)
+        query.then { |sql| options[:account_id] ? sql.where(account_id: options[:account_id]) : sql }
       end
 
       def storage_key(key)

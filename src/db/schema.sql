@@ -34,8 +34,8 @@ CREATE TABLE public.accounts (
     unlock_token text,
     locked_at timestamp(6) without time zone,
     locale text,
-    key_id text,
-    created_at timestamp(6) without time zone NOT NULL
+    created_at timestamp(6) without time zone NOT NULL,
+    key_id text
 );
 
 
@@ -139,7 +139,7 @@ ALTER TABLE ONLY public.challenges
 --
 
 ALTER TABLE ONLY public.keys
-    ADD CONSTRAINT keys_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT keys_pkey PRIMARY KEY (id, account_id);
 
 
 --

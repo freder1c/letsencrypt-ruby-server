@@ -3,11 +3,11 @@
 RSpec.describe "#POST /orders/:id/resolve", :controller, :auth do
   subject { post("/orders/#{order_id}/resolve") }
 
-  let(:key) { create(:key, account:) }
-  let(:order) { create(:order, account:, key:) }
-  let(:order_id) { order.id }
   let(:acme_client) { instance_double(Acme::Client) }
   let(:acme_order) { instance_double(Acme::Client::Resources::Order) }
+  let(:key) { create(:key, :private, account:) }
+  let(:order) { create(:order, account:, key:) }
+  let(:order_id) { order.id }
 
   let(:client_order_hash) do
     {
@@ -29,9 +29,9 @@ RSpec.describe "#POST /orders/:id/resolve", :controller, :auth do
     allow(acme_order).to receive(:to_h).and_return(client_order_hash)
   end
 
-  it "should respond with status processing" do
+  it "should respond with status valid" do
     expect(subject.status).to eq(200)
-    expect(response_body.keys).to eq(%w[id key_id status created_at expires_at])
+    expect(response_body.keys).to eq(%w[id key_id status certificate_url created_at expires_at])
     expect(response_body["status"]).to eq("valid")
   end
 end

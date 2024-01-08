@@ -25,10 +25,9 @@ module Application
         order.persisted!
       end
 
-      # TODO: consider preferred challange type
       def place(order, key)
         client = acme_client(key)
-        new_acme_account(client)
+        check_account(client)
         order_request = client.new_order(identifiers: [order.identifier])
         enrich_order(order, order_request.to_h)
         authorization = order_request.authorizations.first
@@ -38,19 +37,19 @@ module Application
         authorization
       end
 
-      # TODO: Use different key for account and csr, as same is not allowed
-      def finalize(order, key)
-        client = acme_client(key)
-        csr = Acme::Client::CertificateRequest.new(private_key: key.file, subject: { common_name: order.identifier })
+      def finalize(order, order_key, account_key)
+        client = acme_client(account_key)
+        csr = Acme::Client::CertificateRequest.new(private_key: order_key.file,
+                                                   subject: { common_name: order.identifier })
         order_request = acme_order(client, order)
         order_request.finalize(csr:)
-        order.status = order_request.status
+        enrich_order(order, order_request.to_h)
         table.filter(id: order.id).update(order.changed) if order.changed?
         order.persisted!
       end
 
-      def resolve(order, key)
-        client = acme_client(key)
+      def resolve(order, account_key)
+        client = acme_client(account_key)
         order_request = acme_order(client, order)
         order_request.reload # fetch current status
         enrich_order(order, order_request.to_h)
@@ -76,8 +75,11 @@ module Application
         Acme::Client.new(private_key: key.file, directory: Application.acme_directory)
       end
 
-      def new_acme_account(client)
-        client.new_account(contact: "mailto:#{account.email}", terms_of_service_agreed: true) unless client.kid
+      def check_account(client)
+        client.kid
+        client
+      rescue Acme::Client::Error::AccountDoesNotExist
+        client.new_account(contact: "mailto:#{account.email}", terms_of_service_agreed: true)
         client
       end
 

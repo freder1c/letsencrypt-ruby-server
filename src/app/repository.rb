@@ -17,6 +17,14 @@ module Application
         account.id
       end
 
+      def order(query)
+        query.order(Sequel.desc(:created_at))
+      end
+
+      def paginate(query, page)
+        query.limit(page.limit).then { |sql| page.after ? sql.where(Sequel.lit("created_at < ?", page.after)) : sql }
+      end
+
       def wrap_data(attributes, data:, request:)
         return Data::NullRecord.new(request:) if attributes.nil?
 
