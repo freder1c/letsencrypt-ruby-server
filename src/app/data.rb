@@ -52,7 +52,7 @@ module Application
       def persisted!(attrs = [])
         to_persist = attrs.size.positive? ? attrs : self.class.attributes
 
-        to_persist.each do |key, _|
+        to_persist.each_key do |key|
           current = instance_variable_get("@#{key}")
           instance_variable_set("@#{key}_was", current) if current != instance_variable_get("@#{key}_was")
         end

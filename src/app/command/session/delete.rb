@@ -7,7 +7,7 @@ module Application
         def call(id)
           session = repo.find(id)
 
-          if session.present?
+          unless session.nil?
             session.expires_at = Time.current
             repo.update(session)
           end
