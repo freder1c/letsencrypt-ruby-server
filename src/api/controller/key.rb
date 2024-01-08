@@ -6,7 +6,7 @@ module Application
       def all
         authenticate!
 
-        keys = Command::Key::All.new(account).call
+        keys = Command::Key::All.new(account).call(request.params)
         Response.new(status: 200, body: Presenter::Key.new(keys).present!, page: keys.page)
       end
 

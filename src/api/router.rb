@@ -17,7 +17,14 @@ module Application
     end
 
     def sanitize_params(request, params)
-      request.params.merge(params).symbolize_keys
+      request.params.merge(parse_page_headers(request, params)).symbolize_keys
+    end
+
+    def parse_page_headers(request, params)
+      params.merge({
+        page_after: request.get_header("HTTP_PAGE_AFTER"),
+        page_size: request.get_header("HTTP_PAGE_SIZE")
+      }.compact)
     end
 
     def render(resp)
@@ -29,7 +36,7 @@ module Application
     end
 
     def add_page_headers(resp)
-      response.headers["Page-Number"] = resp.page.number
+      response.headers["Page-After"] = resp.page.after
       response.headers["Page-Size"] = resp.page.size
     end
 

@@ -5,7 +5,7 @@ module Application
     class Key < Base
       def all(options = {})
         page = Data::Page.from_params(options)
-        query = table.then { |sql| filter(sql, options) }
+        query = table.then { |sql| filter(sql, options) }.then { |sql| order(sql) }.then { |sql| paginate(sql, page) }
         wrap_collection(query.all, data:, page:)
       end
 
